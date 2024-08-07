@@ -1,0 +1,6 @@
+steps:
+- name: 'gcr.io/cloud-builders/pack'
+  args: ['build', '--builder=gcr.io/buildpacks/builder:v1', '.', '--path', '.', '--tag', 'gcr.io/$PROJECT_ID/flask-app']
+images:
+- 'gcr.io/$PROJECT_ID/flask-app'
+

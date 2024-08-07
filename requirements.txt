@@ -1,0 +1,9 @@
+pip>=24.2
+setuptools>=72.1.0
+wheel>=0.44.0
+Flask==2.0.3
+pandas==2.1.1
+google-cloud-storage==2.18.0
+werkzeug==2.0.3
+numpy==1.24.4
+streamlit

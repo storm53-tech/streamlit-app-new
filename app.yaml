@@ -1,0 +1,15 @@
+runtime: python
+env: flex
+
+handlers:
+- url: /.*
+  script: auto
+
+# Optional: Configure auto-scaling and instance settings
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 5
+
+# Optional: Specify the instance class (memory and CPU)
+instance_class: F2
+
