@@ -1,8 +1,8 @@
 import pandas as pd
 import zipfile
 import io
-import requests  # Ensure requests is imported
-import streamlit as st  # Ensure Streamlit is imported
+import requests
+import streamlit as st
 import datetime
 
 def fetch_latest_data():
@@ -19,43 +19,49 @@ def fetch_latest_data():
         
         # Extract the zip file
         with zipfile.ZipFile(io.BytesIO(response.content)) as z:
-            # List of files in the ZIP
-            files = [file_info for file_info in z.infolist() if file_info.filename.endswith('.csv')]
-            
-            if not files:
-                print("No CSV file found in the ZIP archive.")
-                return pd.DataFrame()
+            file_names = z.namelist()
+            print("Files in the zip archive:", file_names)
+            st.write("Files in the zip archive:", file_names)  # Streamlit debugging
 
-            if len(files) > 1:
-                print("Multiple CSV files found in the ZIP archive.")
-                return pd.DataFrame()
+            csv_files = [name for name in file_names if name.endswith('.csv')]
             
-            # Extract the CSV file
-            csv_file_info = files[0]
-            print(f"Extracting file: {csv_file_info.filename}")
-            with z.open(csv_file_info) as file:
+            if len(csv_files) != 1:
+                raise ValueError(f"Expected exactly one CSV file, but found {len(csv_files)}: {csv_files}")
+
+            csv_file_name = csv_files[0]
+            print(f"Processing CSV file: {csv_file_name}")
+            st.write(f"Processing CSV file: {csv_file_name}")  # Streamlit debugging
+            
+            with z.open(csv_file_name) as file:
                 # Read CSV data directly from the file object
                 try:
                     # Read CSV data
                     df = pd.read_csv(file, delimiter=',', engine='python')
                     df.columns = df.columns.str.strip()  # Remove any extra spaces from column names
                     print("Columns in DataFrame:", df.columns)  # Debug print for columns
+                    st.write("Columns in DataFrame:", df.columns)  # Streamlit debugging
                     print("DataFrame preview:\n", df.head())
+                    st.write("DataFrame preview:\n", df.head())  # Streamlit debugging
                     
                     # Check if DataFrame is empty
                     if df.empty:
                         print("DataFrame is empty.")
+                        st.write("DataFrame is empty.")  # Streamlit debugging
                     
                 except pd.errors.EmptyDataError:
                     print("No data found in CSV file.")
+                    st.write("No data found in CSV file.")  # Streamlit debugging
                 except pd.errors.ParserError:
                     print("Error parsing CSV file.")
+                    st.write("Error parsing CSV file.")  # Streamlit debugging
                 except Exception as e:
                     print(f"General error: {e}")
-                
-            return df
+                    st.write(f"General error: {e}")  # Streamlit debugging
+
+        return df
     except Exception as e:
         print(f"Error fetching data: {e}")
+        st.write(f"Error fetching data: {e}")  # Streamlit debugging
         return pd.DataFrame()
 
 def calculate_lindy_scores(graft_data):
